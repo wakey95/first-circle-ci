@@ -42,13 +42,13 @@ jobs:
           command: echo $RAILWAY_API_KEY > ~/.railway/token
       
       - run:
-            name: Ensure Railway project is set up
-            command: railway link
+          name: Link Railway project (skip login)
+          command: railway link --no-login
 
       - run:
           name: Deploy to Railway
           command: |
-            railway up
+            railway up --no-confirm
 
 workflows:
   version: 2
