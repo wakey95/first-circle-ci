@@ -44,7 +44,7 @@ jobs:
       - run:
           name: Login & link Railway project
           command: |
-            railway login --browserless --apiKey $RAILWAY_API_KEY
+            railway login --browserless
             railway link --project $RAILWAY_PROJECT_ID  
 
       - run:
