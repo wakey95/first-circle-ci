@@ -1,12 +1,8 @@
 def add(a, b):
     return a + b
 
-def main():
+def main(a, b, c):
     try:
-        a = float(input("Nhập giá trị cho a: "))
-        b = float(input("Nhập giá trị cho b: "))
-        c = float(input("Nhập giá trị cho c: "))
-        
         if c == 0:
             print("Lỗi: Không thể chia cho 0!")
             return
@@ -21,4 +17,4 @@ def main():
         print("Lỗi: Vui lòng nhập giá trị hợp lệ cho các số!")
 
 if __name__ == "__main__":
-    main(5, 10, 2)
+    main(5, 3, 2)  # Cung cấp giá trị mặc định cho a, b, c
