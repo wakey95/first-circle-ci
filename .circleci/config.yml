@@ -29,28 +29,9 @@ jobs:
       - checkout
 
       - run:
-          name: Install Railway CLI
+          name: Deploying to production
           command: |
-            curl -sSL https://railway.app/install.sh | bash
-     
-      - run:
-          name: Create .railway directory
-          command: mkdir -p ~/.railway
-
-      - run:
-          name: Set Railway Token
-          command: echo $RAILWAY_API_KEY > ~/.railway/token
-      
-      - run:
-          name: Login & link Railway project
-          command: |
-            railway login --browserless
-            railway link --project $RAILWAY_PROJECT_ID --service 8e459291-56d4-4684-b64e-e5b272c117de
-
-      - run:
-          name: Deploy to Railway
-          command: |
-            railway up --service 8e459291-56d4-4684-b64e-e5b272c117de --environment production
+            echo "Deploying........."
 
 workflows:
   version: 2
