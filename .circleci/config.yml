@@ -44,7 +44,7 @@ jobs:
       - run:
           name: Deploy to Railway
           command: |
-            railway up --app $RAILWAY_APP_NAME
+            railway up -- --app $RAILWAY_APP_NAME
 
 workflows:
   version: 2
