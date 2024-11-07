@@ -50,6 +50,6 @@ workflows:
       - deploy:
           requires:
             - build_and_test
-    filters:
-      branches:
-        only: circle-ci-start  # Chỉ chạy workflow này khi có thay đổi trên nhánh circle-ci-start
+        filters:
+          branches:
+            only: circle-ci-start  # Chỉ chạy workflow này khi có thay đổi trên nhánh circle-ci-start
