@@ -40,11 +40,15 @@ jobs:
       - run:
           name: Set Railway Token
           command: echo $RAILWAY_API_KEY > ~/.railway/token
+      
+      - run:
+            name: Ensure Railway project is set up
+            command: railway link
 
       - run:
           name: Deploy to Railway
           command: |
-            railway up -- --app $RAILWAY_APP_NAME
+            railway up
 
 workflows:
   version: 2
