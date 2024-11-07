@@ -23,11 +23,13 @@ jobs:
 
       # Chạy các bài kiểm tra (tests)
       - run:
-          name: Run tests  # Tên bước kiểm tra
+          name: Run tests  
+          # Tên bước kiểm tra
           command: |
             echo "Running tests..."  
           # In thông báo "Running tests..."
-            pytest tests/ --maxfail=1 --disable-warnings -v  # Chạy bài kiểm tra với pytest, dừng lại nếu có lỗi, ẩn cảnh báo và hiển thị kết quả chi tiết
+            pytest tests/ --maxfail=1 --disable-warnings -v  
+          # Chạy bài kiểm tra với pytest, dừng lại nếu có lỗi, ẩn cảnh báo và hiển thị kết quả chi tiết
 
       # Lưu trữ workspace để dùng lại ở các job khác
       - persist_to_workspace:
