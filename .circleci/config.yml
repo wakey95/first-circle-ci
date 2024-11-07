@@ -19,14 +19,7 @@ jobs:
           name: Run tests
           command: |
             echo "Running tests with pytest..."
-            pytest --maxfail=1 --disable-warnings -v
-      - run:
-          name: Check for test files
-          command: |
-            if ! ls tests/*.py 1> /dev/null 2>&1; then
-              echo "No test files found."
-              exit 0
-            fi
+            pytest tests/ --maxfail=1 --disable-warnings -v
       - run:
           name: Run tests
           command: pytest
