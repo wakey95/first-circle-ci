@@ -42,10 +42,10 @@ jobs:
           command: echo $RAILWAY_API_KEY > ~/.railway/token
       
       - run:
-          name: Link Railway project (skip login)
+          name: Login & link Railway project
           command: |
-            railway login
-            railway link
+            railway login --browserless --apiKey $RAILWAY_API_KEY
+            railway link --project $RAILWAY_PROJECT_ID  
 
       - run:
           name: Deploy to Railway
