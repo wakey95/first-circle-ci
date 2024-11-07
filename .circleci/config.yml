@@ -41,7 +41,7 @@ jobs:
       # Đăng nhập vào Railway bằng API key
       - run:
           name: Login to Railway
-          command: railway login --token $RAILWAY_API_KEY  # Đăng nhập vào Railway bằng API key
+          command: railway login  # Đăng nhập vào Railway bằng API key
 
       # Triển khai ứng dụng lên Railway
       - run:
@@ -57,3 +57,6 @@ workflows:
       - deploy:  # Sau khi build_and_test hoàn thành, chạy job deploy
           requires:
             - build_and_test  # Đảm bảo job deploy chỉ chạy sau khi build_and_test thành công
+          filters:
+            branches:
+              only: circle-ci-start
