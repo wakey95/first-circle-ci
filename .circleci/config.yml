@@ -41,7 +41,7 @@ jobs:
       # Đăng nhập vào Railway bằng API key
       - run:
           name: Login to Railway
-          command: railway login  # Đăng nhập vào Railway bằng API key
+          command: railway login --apiKey $RAILWAY_API_KEY # Đăng nhập vào Railway bằng API key
 
       # Triển khai ứng dụng lên Railway
       - run:
