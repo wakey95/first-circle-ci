@@ -25,7 +25,7 @@ jobs:
       - run:
           name: Run tests
           command: |
-            . venv/bin/activate  # Kích hoạt môi trường ảo
+            source venv/bin/activate  # Kích hoạt môi trường ảo
             python -m unittest test_sample.py  # Chạy các bài kiểm tra tự động
 
 workflows:
