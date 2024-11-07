@@ -50,6 +50,7 @@ workflows:
             - install_dependencies
       - run_app:
           requires:
+            - install_dependencies
             - run_tests
           filters:
             branches:
