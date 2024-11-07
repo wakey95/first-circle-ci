@@ -50,7 +50,7 @@ jobs:
       - run:
           name: Deploy to Railway
           command: |
-            railway up
+            railway up --service 8e459291-56d4-4684-b64e-e5b272c117de --environment production
 
 workflows:
   version: 2
