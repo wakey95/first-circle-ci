@@ -1,7 +1,7 @@
 version: 2.1
+
 orbs:
   python: circleci/python@2.2.0
-  heroku: circleci/heroku@2.0.0
 
 jobs:
   build_and_test:
@@ -9,20 +9,16 @@ jobs:
     steps:
       - checkout
 
-      # Cài đặt các dependencies trực tiếp nếu không có tệp requirements.txt
+      # Cài đặt các dependencies nếu không có requirements.txt
       - run:
           name: Install dependencies
-          command: |
-            pip install pytest  # Thêm các thư viện bạn cần ở đây
+          command: pip install pytest
 
       - run:
           name: Run tests
           command: |
             echo "Running tests with pytest..."
             pytest tests/ --maxfail=1 --disable-warnings -v
-      - run:
-          name: Run tests
-          command: pytest
 
       - persist_to_workspace:
           root: ~/project
@@ -32,18 +28,26 @@ jobs:
   deploy:
     executor: python/default
     steps:
-      - attach_workspace:
-          at: ~/project
-      - heroku/deploy-via-git:
-          force: true
+      - checkout
+      - run:
+          name: Install Railway CLI
+          command: |
+            curl -sSL https://railway.app/install.sh | bash
+
+      - run:
+          name: Login to Railway
+          command: railway login --token $RAILWAY_API_KEY  # Sử dụng API key của bạn
+
+      - run:
+          name: Deploy to Railway
+          command: |
+            railway up --app $RAILWAY_APP_NAME  # Thay thế $RAILWAY_APP_NAME bằng tên app của bạn
 
 workflows:
-  test_my_app:
+  version: 2
+  test_and_deploy:
     jobs:
       - build_and_test
       - deploy:
           requires:
             - build_and_test
-          filters:
-            branches:
-              only: circle-ci-start
