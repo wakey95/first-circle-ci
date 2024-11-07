@@ -1,53 +1,78 @@
-version: 2.1
+version: 2.1  # Xác định phiên bản cấu hình CircleCI. Phiên bản 2.1 cho phép sử dụng các tính năng hiện đại như "workflows" và "orbs".
 
-orbs:
-  python: circleci/python@2.2.0
+# Định nghĩa Executors: môi trường Docker sẽ được sử dụng cho các job.
+executors:
+  python-executor:
+    docker:
+      - image: python:3.8  # Dùng Docker image chính thức của Python 3.8 làm môi trường chạy
+    working_directory: ~/project  # Đặt thư mục làm việc trong container Docker là ~/project
 
+# Định nghĩa Jobs: công việc thực hiện các bước như build, test, deploy.
 jobs:
   build_and_test:
-    executor: python/default
+    executor: python-executor  # Sử dụng executor python-executor đã định nghĩa ở trên
     steps:
-      - checkout
-
-      # Cài đặt các dependencies nếu không có requirements.txt
+      - checkout  # Lệnh này lấy mã nguồn từ repository Git (kết nối với GitHub, Bitbucket hoặc GitLab).
+      
+      # Cài đặt dependencies từ tệp requirements.txt
       - run:
-          name: Install dependencies
-          command: pip install pytest
-
-      - run:
-          name: Run tests
+          name: Install dependencies  # Tên bước thực hiện
           command: |
-            echo "Running tests with pytest..."
-            pytest tests/ --maxfail=1 --disable-warnings -v
+            pip install -r requirements.txt  
+          # Cài đặt các thư viện cần thiết từ tệp requirements.txt
 
+      # Chạy các bài kiểm tra (tests)
+      - run:
+          name: Run tests  # Tên bước kiểm tra
+          command: |
+            echo "Running tests..."  
+          # In thông báo "Running tests..."
+            pytest tests/ --maxfail=1 --disable-warnings -v  # Chạy bài kiểm tra với pytest, dừng lại nếu có lỗi, ẩn cảnh báo và hiển thị kết quả chi tiết
+
+      # Lưu trữ workspace để dùng lại ở các job khác
       - persist_to_workspace:
-          root: ~/project
+          root: ~/project  # Lưu trữ thư mục mã nguồn và các thay đổi
           paths:
-            - .
+            - .  # Lưu toàn bộ thư mục hiện tại (mã nguồn và kết quả kiểm tra)
 
   deploy:
-    executor: python/default
+    executor: python-executor  # Sử dụng executor python-executor cho job deploy
     steps:
-      - checkout
+      - attach_workspace:
+          at: ~/project  # Gắn workspace đã lưu từ job build_and_test vào thư mục ~/project
+
+      # Cài đặt Railway CLI (công cụ dòng lệnh để triển khai ứng dụng lên Railway)
       - run:
-          name: Install Railway CLI
+          name: Install Railway CLI  # Tên bước cài đặt Railway CLI
           command: |
-            curl -sSL https://railway.app/install.sh | bash
+            curl -sSL https://railway.app/cli.sh | bash  
+          # Tải và cài đặt Railway CLI qua script
+            export PATH=$PATH:$HOME/.railway/bin  
+          # Thêm Railway CLI vào đường dẫn hệ thống để có thể sử dụng từ dòng lệnh
 
+      # Đăng nhập vào Railway bằng token (Token phải được lưu trong CircleCI environment variables)
       - run:
-          name: Login to Railway
-          command: railway login --token $RAILWAY_API_KEY  # Sử dụng API key của bạn
-
-      - run:
-          name: Deploy to Railway
+          name: Railway login  # Tên bước đăng nhập vào Railway
           command: |
-            railway up --app $RAILWAY_APP_NAME  # Thay thế $RAILWAY_APP_NAME bằng tên app của bạn
+            railway login --token $RAILWAY_TOKEN  
+          # Đăng nhập vào Railway bằng token (lưu trong CircleCI environment)
 
+      # Triển khai ứng dụng lên Railway
+      - run:
+          name: Deploy to Railway  # Tên bước triển khai ứng dụng
+          command: |
+            railway up  
+          # Dùng lệnh railway up để triển khai ứng dụng lên Railway
+
+# Định nghĩa Workflows: Xác định thứ tự và điều kiện chạy các job.
 workflows:
-  version: 2
-  test_and_deploy:
+  version: 2  # Phiên bản workflow của CircleCI
+  deploy:
     jobs:
-      - build_and_test
-      - deploy:
+      - build_and_test  # Chạy job build_and_test trước
+      - deploy:  # Sau khi build_and_test thành công, chạy job deploy
           requires:
-            - build_and_test
+            - build_and_test  # Đảm bảo job deploy chỉ chạy sau khi job build_and_test hoàn thành thành công
+          filters:
+            branches:
+              only: circle-ci-start  # Chỉ chạy workflow này khi thay đổi được đẩy lên nhánh `main`
