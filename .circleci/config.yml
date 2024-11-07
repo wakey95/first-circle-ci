@@ -30,6 +30,16 @@ jobs:
             python --version  # Kiểm tra lại phiên bản Python sau khi kích hoạt môi trường ảo
             python -m unittest test_sample.py
 
+  run_app:
+    executor: python-executor
+    steps:
+      - checkout  # Lấy mã nguồn từ repo
+      - run:
+          name: Run app.py
+          command: |
+            echo "Starting app.py..."
+            python app.py  # Chạy file app.py (nếu đây là ứng dụng Flask hoặc ứng dụng Python khác)
+
 workflows:
   version: 2
   build_and_test:
