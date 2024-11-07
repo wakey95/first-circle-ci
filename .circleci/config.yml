@@ -48,6 +48,9 @@ workflows:
       - run_tests:
           requires:
             - install_dependencies
+      - run_app:
+          requires:
+            - run_tests
           filters:
             branches:
               only: circle-ci-start
