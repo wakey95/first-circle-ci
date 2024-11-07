@@ -1,46 +1,41 @@
 version: 2.1
 
-orbs:
-  python: circleci/python@2.2.0
+executors:
+  python-executor:
+    docker:
+      - image: circleci/python:3.8
+    working_directory: ~/my-python-app
 
 jobs:
-  build_and_test:
-    executor: python/default
+  install_dependencies:
+    executor: python-executor
     steps:
-      - checkout
+      - checkout  # Lấy mã nguồn từ repo
       - run:
           name: Install dependencies
-          command: pip install -r requirements.txt
+          command: |
+            python -m venv venv  # Tạo môi trường ảo
+            . venv/bin/activate  # Kích hoạt môi trường ảo
+            pip install -r requirements.txt  # Cài đặt các thư viện trong requirements.txt
 
+  run_tests:
+    executor: python-executor
+    steps:
+      - checkout  # Lấy mã nguồn từ repo
       - run:
           name: Run tests
           command: |
-            echo "Running tests with pytest..."
-            pytest tests/ --maxfail=1 --disable-warnings -v
-
-      - persist_to_workspace:
-          root: ~/project
-          paths:
-            - .
-
-  deploy:
-    executor: python/default
-    steps:
-      - checkout
-
-      - run:
-          name: Deploying to production
-          command: |
-            echo "Deploying........."
+            . venv/bin/activate  # Kích hoạt môi trường ảo
+            python -m unittest test_sample.py  # Chạy các bài kiểm tra tự động
 
 workflows:
   version: 2
-  test_and_deploy:
+  build_and_test:
     jobs:
-      - build_and_test
-      - deploy:
+      - install_dependencies
+      - run_tests:
           requires:
-            - build_and_test
+            - install_dependencies
           filters:
             branches:
-              only: circle-ci-start  # Chỉ chạy workflow này khi có thay đổi trên nhánh circle-ci-start
+              only: circle-ci-start

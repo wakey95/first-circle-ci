@@ -1,13 +1,5 @@
-from flask import Flask
+def add(a, b):
+    return a + b
 
-# Tạo một ứng dụng Flask
-app = Flask(__name__)
-
-# Định nghĩa route chính
-@app.route('/')
-def home():
-    return "Hello, World!"
-
-# Chạy ứng dụng Flask
-if __name__ == '__main__':
-    app.run(debug=True)
+if __name__ == "__main__":
+    print(add(2, 3))
