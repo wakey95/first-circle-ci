@@ -14,8 +14,11 @@ jobs:
       - run:
           name: Install dependencies
           command: |
+            echo "Creating virtual environment..."
             python -m venv venv  # Tạo môi trường ảo
-            . venv/bin/activate  # Kích hoạt môi trường ảo
+            ls venv # Kiểm tra xem thư mục venv đã được tạo chưa
+            source venv/bin/activate  # Kích hoạt môi trường ảo
+            pip install --upgrade pip  # Cập nhật pip để tránh lỗi
             pip install -r requirements.txt  # Cài đặt các thư viện trong requirements.txt
 
   run_tests:
@@ -25,6 +28,7 @@ jobs:
       - run:
           name: Run tests
           command: |
+            ls venv  # Kiểm tra lại thư mục venv
             source venv/bin/activate  # Kích hoạt môi trường ảo
             python -m unittest test_sample.py  # Chạy các bài kiểm tra tự động
 
