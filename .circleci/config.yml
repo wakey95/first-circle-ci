@@ -16,11 +16,6 @@ jobs:
           command: |
             echo "Start creating virtual environment..."
             python --version  # Kiểm tra phiên bản Python
-            python -m venv venv  # Tạo môi trường ảo
-            echo "Virtual environment created"
-            ls -la  # Kiểm tra tất cả các thư mục và file trong thư mục làm việc
-            ls venv  # Kiểm tra sự tồn tại của thư mục venv
-            source venv/bin/activate  # Kích hoạt môi trường ảo
             pip install --upgrade pip  # Cập nhật pip để tránh lỗi
             pip install -r requirements.txt  # Cài đặt các thư viện trong requirements.txt
 
@@ -32,9 +27,8 @@ jobs:
           name: Run tests
           command: |
             echo "Checking if virtual environment exists..."
-            ls venv  # Kiểm tra lại thư mục venv
-            source venv/bin/activate  # Kích hoạt lại môi trường ảo
             python --version  # Kiểm tra lại phiên bản Python sau khi kích hoạt môi trường ảo
+            python -m unittest test_sample.py
 
 workflows:
   version: 2
