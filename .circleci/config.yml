@@ -43,12 +43,14 @@ jobs:
       
       - run:
           name: Link Railway project (skip login)
-          command: railway link --no-login
+          command: |
+            railway login -y
+            railway link
 
       - run:
           name: Deploy to Railway
           command: |
-            railway up --no-confirm
+            railway up
 
 workflows:
   version: 2
