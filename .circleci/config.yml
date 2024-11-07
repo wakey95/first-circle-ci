@@ -44,7 +44,7 @@ jobs:
       - run:
           name: Link Railway project (skip login)
           command: |
-            railway login -y
+            railway login
             railway link
 
       - run:
