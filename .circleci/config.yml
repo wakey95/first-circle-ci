@@ -1,62 +1,55 @@
-version: 2.1  # Xác định phiên bản CircleCI
+version: 2.1
 
 orbs:
-  python: circleci/python@2.2.0  # Orb Python của CircleCI
+  python: circleci/python@2.2.0
 
 jobs:
   build_and_test:
-    executor: python/default  # Sử dụng executor Python mặc định
+    executor: python/default
     steps:
-      - checkout  # Kiểm tra mã nguồn từ Git
-
-      # Cài đặt dependencies từ requirements.txt
+      - checkout
       - run:
           name: Install dependencies
-          command: pip install -r requirements.txt  # Cài đặt tất cả các thư viện trong requirements.txt
+          command: pip install -r requirements.txt
 
-      # Chạy các bài kiểm tra với pytest
       - run:
           name: Run tests
           command: |
             echo "Running tests with pytest..."
-            pytest tests/ --maxfail=1 --disable-warnings -v  # Chạy pytest trên thư mục tests
+            pytest tests/ --maxfail=1 --disable-warnings -v
 
-      # Lưu trữ workspace để sử dụng ở các bước tiếp theo
       - persist_to_workspace:
           root: ~/project
           paths:
             - .
 
   deploy:
-    executor: python/default  # Sử dụng executor Python mặc định
+    executor: python/default
     steps:
-      - checkout  # Kiểm tra mã nguồn từ Git
+      - checkout
 
-      # Cài đặt Railway CLI
       - run:
           name: Install Railway CLI
           command: |
-            curl -sSL https://railway.app/install.sh | bash  # Cài đặt Railway CLI
+            curl -sSL https://railway.app/install.sh | bash
 
-      # Đăng nhập vào Railway bằng API key
       - run:
-          name: Login to Railway
-          command: railway login --apiKey $RAILWAY_API_KEY # Đăng nhập vào Railway bằng API key
+          name: Set Railway Token
+          command: echo $RAILWAY_API_KEY > ~/.railway/token
 
-      # Triển khai ứng dụng lên Railway
       - run:
           name: Deploy to Railway
           command: |
-            railway up --app $RAILWAY_APP_NAME  # Triển khai ứng dụng lên Railway với tên ứng dụng
+            railway up --app $RAILWAY_APP_NAME
 
 workflows:
   version: 2
   test_and_deploy:
     jobs:
-      - build_and_test  # Chạy job build_and_test trước
-      - deploy:  # Sau khi build_and_test hoàn thành, chạy job deploy
+      - build_and_test
+      - deploy:
           requires:
-            - build_and_test  # Đảm bảo job deploy chỉ chạy sau khi build_and_test thành công
-          filters:
-            branches:
-              only: circle-ci-start
+            - build_and_test
+    filters:
+      branches:
+        only: circle-ci-start  # Chỉ chạy workflow này khi có thay đổi trên nhánh circle-ci-start
